@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8080
+      - NODE_ENV=development
+    depends_on:
+      - backend
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    command: pnpm dev
+
+  backend:
+    image: node:18-alpine
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=development
+      - PORT=8080
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    command: npm run dev
+    profiles:
+      - with-backend
+
+  # Opcional: Servicio de base de datos
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=agrigo
+      - POSTGRES_PASSWORD=agrigo_password
+      - POSTGRES_DB=agrigo_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    profiles:
+      - with-db
+
+volumes:
+  postgres_data:
