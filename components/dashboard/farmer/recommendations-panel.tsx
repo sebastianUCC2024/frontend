@@ -32,7 +32,7 @@ export default function RecommendationsPanel() {
 
   const fetchCrops = async () => {
     try {
-      const response = await fetch('http://localhost:8080/farmers/crops', {
+      const response = await fetch(${process.env.NEXT_PUBLIC_API_BASE_URL}/farmers/crops', {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (response.ok) {
@@ -45,7 +45,7 @@ export default function RecommendationsPanel() {
 
   const fetchRecommendations = async () => {
     try {
-      const response = await fetch('http://localhost:8080/ai/recommendations', {
+      const response = await fetch(${process.env.NEXT_PUBLIC_API_BASE_URL}/ai/recommendations', {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (response.ok) {
@@ -62,7 +62,7 @@ export default function RecommendationsPanel() {
     if (!selectedCrop) return
     setIsRequesting(true)
     try {
-      const response = await fetch('http://localhost:8080/ai/recommend', {
+      const response = await fetch(${process.env.NEXT_PUBLIC_API_BASE_URL}/ai/recommend', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ export default function RecommendationsPanel() {
 
   const getExplanation = async (cropId: string) => {
     try {
-      const response = await fetch(`http://localhost:8080/ai/explain/${cropId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/ai/explain/${cropId}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (response.ok) {

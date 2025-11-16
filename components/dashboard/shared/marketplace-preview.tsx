@@ -25,7 +25,7 @@ export default function MarketplacePreview() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('http://localhost:8080/marketplace/products', {
+      const response = await fetch(${process.env.NEXT_PUBLIC_API_BASE_URL}/marketplace/products', {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (response.ok) {

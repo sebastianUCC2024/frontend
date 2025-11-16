@@ -34,7 +34,7 @@ export default function CropsManagement() {
 
   const fetchCrops = async () => {
     try {
-      const response = await fetch('http://localhost:8080/farmers/crops', {
+      const response = await fetch(${process.env.NEXT_PUBLIC_API_BASE_URL}/farmers/crops', {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (response.ok) {
@@ -51,7 +51,7 @@ export default function CropsManagement() {
   const handleCreateCrop = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const response = await fetch('http://localhost:8080/farmers/crops', {
+      const response = await fetch(${process.env.NEXT_PUBLIC_API_BASE_URL}/farmers/crops', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

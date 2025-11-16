@@ -24,7 +24,7 @@ export function useAiRecommendations(token: string | null) {
       setError(null)
 
       try {
-        const response = await fetch('http://localhost:8080/ai/recommend', {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/ai/recommend`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

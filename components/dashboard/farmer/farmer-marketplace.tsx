@@ -35,7 +35,7 @@ export default function FarmerMarketplace() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('http://localhost:8080/marketplace/products', {
+      const response = await fetch(${process.env.NEXT_PUBLIC_API_BASE_URL}/marketplace/products', {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (response.ok) {
@@ -51,7 +51,7 @@ export default function FarmerMarketplace() {
   const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const response = await fetch('http://localhost:8080/marketplace/products', {
+      const response = await fetch(${process.env.NEXT_PUBLIC_API_BASE_URL}/marketplace/products', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ export default function FarmerMarketplace() {
   const handleDeleteProduct = async (productId: string) => {
     if (confirm('Are you sure you want to delete this product?')) {
       try {
-        const response = await fetch(`http://localhost:8080/marketplace/products/${productId}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/marketplace/products/${productId}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` },
         })

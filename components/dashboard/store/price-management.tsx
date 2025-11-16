@@ -28,7 +28,7 @@ export default function PriceManagement() {
 
   const fetchPrices = async () => {
     try {
-      const response = await fetch('http://localhost:8080/stores/inputs', {
+      const response = await fetch(${process.env.NEXT_PUBLIC_API_BASE_URL}/stores/inputs', {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (response.ok) {
@@ -51,7 +51,7 @@ export default function PriceManagement() {
 
   const handleUpdatePrice = async (inputId: string) => {
     try {
-      const response = await fetch(`http://localhost:8080/stores/inputs/${inputId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/stores/inputs/${inputId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

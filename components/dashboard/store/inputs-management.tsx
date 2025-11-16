@@ -36,7 +36,7 @@ export default function InputsManagement() {
 
   const fetchInputs = async () => {
     try {
-      const response = await fetch('http://localhost:8080/stores/inputs', {
+      const response = await fetch(${process.env.NEXT_PUBLIC_API_BASE_URL}/stores/inputs', {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (response.ok) {
@@ -52,7 +52,7 @@ export default function InputsManagement() {
   const handleCreateInput = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const response = await fetch('http://localhost:8080/stores/inputs', {
+      const response = await fetch(${process.env.NEXT_PUBLIC_API_BASE_URL}/stores/inputs', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -88,7 +88,7 @@ export default function InputsManagement() {
   const handleDeleteInput = async (inputId: string) => {
     if (confirm('Are you sure you want to delete this input?')) {
       try {
-        const response = await fetch(`http://localhost:8080/stores/inputs/${inputId}`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/stores/inputs/${inputId}`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` },
         })

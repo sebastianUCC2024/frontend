@@ -33,7 +33,7 @@ export default function PriceComparator() {
 
   const fetchComparisons = async () => {
     try {
-      const response = await fetch('http://localhost:8080/price-comparator/all', {
+      const response = await fetch(${process.env.NEXT_PUBLIC_API_BASE_URL}/price-comparator/all', {
         headers: { Authorization: `Bearer ${token}` },
       })
       if (response.ok) {
