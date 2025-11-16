@@ -1,4 +1,5 @@
 // Centralized API client with proper error handling
+import { getMockResponse, isMockEndpoint } from '@/lib/mock-api'
 
 interface ApiResponse<T> {
   data: T | null
@@ -7,10 +8,15 @@ interface ApiResponse<T> {
 }
 
 export class ApiClient {
-  private baseUrl: string = 'http://localhost:8080'
+  private baseUrl: string
+  private useMock: boolean = false
 
   constructor(baseUrl?: string) {
-    if (baseUrl) this.baseUrl = baseUrl
+    if (baseUrl) {
+      this.baseUrl = baseUrl
+    } else {
+      this.baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
+    }
   }
 
   async get<T>(
@@ -24,6 +30,11 @@ export class ApiClient {
       })
       return this.handleResponse(response)
     } catch (error) {
+      // If backend is down and it's a mock endpoint, use mock response
+      if (isMockEndpoint(endpoint)) {
+        const mockResponse = await getMockResponse(endpoint, 'GET')
+        return this.handleResponse(mockResponse)
+      }
       return this.handleError(error)
     }
   }
@@ -41,6 +52,11 @@ export class ApiClient {
       })
       return this.handleResponse(response)
     } catch (error) {
+      // If backend is down and it's a mock endpoint, use mock response
+      if (isMockEndpoint(endpoint)) {
+        const mockResponse = await getMockResponse(endpoint, 'POST')
+        return this.handleResponse(mockResponse)
+      }
       return this.handleError(error)
     }
   }
