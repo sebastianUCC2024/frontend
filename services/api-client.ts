@@ -1,6 +1,3 @@
-// Centralized API client with proper error handling
-import { getMockResponse, isMockEndpoint } from '@/lib/mock-api'
-
 interface ApiResponse<T> {
   data: T | null
   error: string | null
@@ -9,14 +6,9 @@ interface ApiResponse<T> {
 
 export class ApiClient {
   private baseUrl: string
-  private useMock: boolean = false
 
   constructor(baseUrl?: string) {
-    if (baseUrl) {
-      this.baseUrl = baseUrl
-    } else {
-      this.baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
-    }
+    this.baseUrl = '/api/proxy'
   }
 
   async get<T>(
@@ -24,17 +16,13 @@ export class ApiClient {
     token?: string
   ): Promise<ApiResponse<T>> {
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      const response = await fetch(`${this.baseUrl}?target=${encodeURIComponent(endpoint)}`, {
         method: 'GET',
         headers: this.getHeaders(token),
       })
       return this.handleResponse(response)
     } catch (error) {
-      // If backend is down and it's a mock endpoint, use mock response
-      if (isMockEndpoint(endpoint)) {
-        const mockResponse = await getMockResponse(endpoint, 'GET')
-        return this.handleResponse(mockResponse)
-      }
+      console.error('[v0] API GET Error:', error)
       return this.handleError(error)
     }
   }
@@ -45,18 +33,14 @@ export class ApiClient {
     token?: string
   ): Promise<ApiResponse<T>> {
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      const response = await fetch(`${this.baseUrl}?target=${encodeURIComponent(endpoint)}`, {
         method: 'POST',
         headers: this.getHeaders(token),
         body: JSON.stringify(body),
       })
       return this.handleResponse(response)
     } catch (error) {
-      // If backend is down and it's a mock endpoint, use mock response
-      if (isMockEndpoint(endpoint)) {
-        const mockResponse = await getMockResponse(endpoint, 'POST')
-        return this.handleResponse(mockResponse)
-      }
+      console.error('[v0] API POST Error:', error)
       return this.handleError(error)
     }
   }
@@ -67,13 +51,14 @@ export class ApiClient {
     token?: string
   ): Promise<ApiResponse<T>> {
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      const response = await fetch(`${this.baseUrl}?target=${encodeURIComponent(endpoint)}`, {
         method: 'PUT',
         headers: this.getHeaders(token),
         body: JSON.stringify(body),
       })
       return this.handleResponse(response)
     } catch (error) {
+      console.error('[v0] API PUT Error:', error)
       return this.handleError(error)
     }
   }
@@ -83,12 +68,13 @@ export class ApiClient {
     token?: string
   ): Promise<ApiResponse<T>> {
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      const response = await fetch(`${this.baseUrl}?target=${encodeURIComponent(endpoint)}`, {
         method: 'DELETE',
         headers: this.getHeaders(token),
       })
       return this.handleResponse(response)
     } catch (error) {
+      console.error('[v0] API DELETE Error:', error)
       return this.handleError(error)
     }
   }
@@ -105,9 +91,17 @@ export class ApiClient {
 
   private async handleResponse<T>(response: Response): Promise<ApiResponse<T>> {
     if (!response.ok) {
+      let errorMessage = `HTTP ${response.status}`
+      try {
+        const errorData = await response.json()
+        errorMessage = errorData.message || errorMessage
+      } catch {
+        const text = await response.text()
+        if (text) errorMessage = text
+      }
       return {
         data: null,
-        error: `HTTP ${response.status}`,
+        error: errorMessage,
         status: response.status,
       }
     }

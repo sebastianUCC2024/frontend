@@ -1,7 +1,0 @@
-# LFS files
-*.node filter=lfs diff=lfs merge=lfs -text
-*.so filter=lfs diff=lfs merge=lfs -text
-*.dll filter=lfs diff=lfs merge=lfs -text
-
-# Build output
-.next/cache/** filter=lfs diff=lfs merge=lfs -text

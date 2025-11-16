@@ -52,13 +52,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true)
     setError(null)
     try {
-      const response = await fetch('http://localhost:8080/auth/login', {
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       })
       
-      if (!response.ok) throw new Error('Login failed')
+      if (!response.ok) {
+        let errorMsg = 'Login failed'
+        try {
+          const errorData = await response.json()
+          errorMsg = errorData.message || errorMsg
+        } catch {
+          errorMsg = `HTTP ${response.status}`
+        }
+        throw new Error(errorMsg)
+      }
       
       const { token: newToken, user: userData } = await response.json()
       setToken(newToken)
@@ -68,6 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Login error'
       setError(message)
+      console.error('[v0] Login error:', message)
       throw err
     } finally {
       setIsLoading(false)
@@ -78,13 +88,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true)
     setError(null)
     try {
-      const response = await fetch('http://localhost:8080/auth/register', {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
       })
       
-      if (!response.ok) throw new Error('Registration failed')
+      if (!response.ok) {
+        let errorMsg = 'Registration failed'
+        try {
+          const errorData = await response.json()
+          errorMsg = errorData.message || errorMsg
+        } catch {
+          errorMsg = `HTTP ${response.status}`
+        }
+        throw new Error(errorMsg)
+      }
       
       const { token: newToken, user: newUser } = await response.json()
       setToken(newToken)
@@ -94,6 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Registration error'
       setError(message)
+      console.error('[v0] Registration error:', message)
       throw err
     } finally {
       setIsLoading(false)
